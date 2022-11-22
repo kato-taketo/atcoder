@@ -1,49 +1,29 @@
-// WA
+//公式解説
+//右半区間で管理すると逆によくわからなくなる
 
-#include <bits/stdc++.h>
+#include <iostream>
 using namespace std;
-using ll = long long;
-#define rep(i, n) for (int i = 0; i < (int)(n); i++)
-#define rep2(i, s, n) for (int i = (s); i < (int)(n); i++)
-#define REP(i,a,b) for(int i = (a); i < (b); i++)
-#define MOD 1000000007
 
-int main(void) {
+int sed(int A, int B, int C, int D) {
+  cout << "? " << A << " " << B << " " << C << " " << D << endl;
+  cin >> A;
+  return A;
+}
+
+int main() {
   int N;
   cin >> N;
-  
-  int a,b,c,d;
-  a=1,b=N/2,c=1,d=N;
-  int tmp=0;
-  while(1) {
-    printf("? %d %d %d %d\n", a,b,c,d);
-    int t;
-    cin >> t;
-    if(t==0) break;
-    if(t==b-a+1) {
-      a=b+1, b=b+1+(b-a+1)/2;
-      tmp += t;
-    } else {
-      a=a, b=a-1+(b-a+1)/2;
-      tmp = tmp + ((N-1)-tmp-(b-a));
-    }
-    if(tmp==N-1) break;
+  int U = 1, D = N + 1;
+  while(U + 1 != D) {
+    int M = (U + D) / 2;
+    int c = send(U,M-1,1,N);
+    (c == M - U ? U : D) = M;
   }
-  d=N/2;
-  tmp=0;
-  while(1) {
-    printf("? %d %d %d %d\n", a,b,c,d);
-    int t;
-    cin >> t;
-    if(t==0) break;
-    if(t==d-c+1) {
-      c=d+1, d=d+1+(d-c+1)/2;
-      tmp += t;
-    } else {
-      c=c, d=c-1+(d-c+1)/2;
-      tmp = tmp + ((N-1)-tmp-(d-c));
-    }
-    if(tmp==N-1) break;
+  int L = 1, R = N + 1;
+  while(L + 1 != R) {
+    int M = (L + R) / 2;
+    int c = send(1,N,L,M-1);
+    (c == M - L ? L : R) = M;
   }
-  printf("! %d %d\n", a,c);
+  cout << "! " << U << " " << L << endl;
 }
