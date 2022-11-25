@@ -1,32 +1,31 @@
-// took long time...
-
-#include <bits/stdc++.h>
+#include <iostream>
+#include <queue>
+#include <vector>
 using namespace std;
-using ll = long long;
-#define rep(i, n) for (int i = 0; i < (int)(n); i++)
-#define rep2(i, s, n) for (int i = (s); i < (int)(n); i++)
-#define REP(i,a,b) for(int i = (a); i < (b); i++)
-#define MOD 1000000007
-
-using P = pair<ll,int>;
-int main(void) {
-  ll N,K;
+using ll = long long int;
+int main() {
+  int N;
+  ll K;
   cin >> N >> K;
   vector<ll> A(N);
-  rep(i,N) cin >> A[i];
-
-  // 貪欲砲?
-  vector<bool> zero(N,false);  // zero[i] := A[i]=0
-  int cnt=0;  // cnt := num(zero[i]=true)
-  priority_queue<P, vector<P>, greater<P> > que;
-  rep(i,N) {
-    if(A[i]==0) zero[i]=true, cnt++;
-    else que.push(P(A[i],i));
+  priority_queue<ll,vector<ll>,greater<ll> > pq;
+  for(int i=0; i<N; i++) {
+    cin >> A[i];
+    pq.push(A[i]);
   }
-  int index=0;
-  while(1) {
-    ll value=que.top().first;
-
-
+  ll loop = 0;
+  for(int i=N; ; --i) {
+    ll nextLoop = pq.top() - loop;
+    pq.pop();
+    if (nextLoop * i > K) nextLoop = K / i;
+    K -= nextLoop * i;
+    loop += nextLoop;
+    if (K < i) break;
   }
+  for (long a : A) {
+    ll ans = max(0LL, a-loop);
+    if(a > loop && K-- > 0LL) --ans;
+    cout << ans << endl;
+  }
+  return 0;
 }
