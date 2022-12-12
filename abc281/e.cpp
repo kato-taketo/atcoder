@@ -1,3 +1,5 @@
+// official answer
+
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
@@ -5,58 +7,63 @@ using ll = long long;
 #define rep2(i, s, n) for (int i = (s); i < (int)(n); i++)
 #define REP(i,a,b) for(int i = (a); i < (b); i++)
 #define MOD 1000000007
-using P = pair<ll,int>;
 
-ll min_func(ll x, ll y) {
-  if(x>y) return y;
-  else return x;
-}
+struct PQ {
+  priority_queue<int> q, dq;
+  void push(int x) { q.push(x);}
+  int top() {
+    while(dq.size() && q.top() == dq.top()) {
+      q.pop(); dq.pop();
+    }
+    return q.top();
+  }
+  void pop() { top(); q.pop();}
+  void erase(int x) {dq.push(x); }
+  int size() const {return q.size() - dq.size();}
+};
+struct DS {
+  int k;
+  ll sum;
+  multiset<int> ls, rs;
+  DS(int k=0): k(k), sum(0) {}
+  void ladd(int x) {
+    sum += x;
+    ls.insert(x);
+  }
+  void lerase(multiset<int>::iterator it) {
+    sum -= *it;
+    ls.erase(it);
+  }
+  void add(int x) {
+    ladd(x);
+    if (int(ls.size()) <= k) return;
+    auto it = ls.end(); it--;
+    rs.insert(*it);
+    lerase(it);
+  }
+  void erase(int x) {
+    if (*ls.rbegin() < x) {
+      rs.erase(rs.find(x));
+    } else {
+      lerase(ls.find(x));
+      auto it = rs.begin();
+      ladd(*it);
+      rs.erase(it);
+    }
+  }
+};
+
 int main(void) {
-  ll n,m,k;
+  int n,m,k;
   cin >> n >> m >> k;
-  vector<ll> a(n);
+  vector<int> a(n);
   rep(i,n) cin >> a[i];
-
-  vector<ll> res(n-m+1);
-  priority_queue<P, vector<P>, greater<P> > que;
-  map<ll,int> mp;  // (value,number)
-  map<ll,int> addmp;  // (value,number)
-
-  // 初期化
-  for(int i=0; i<m; i++) {
-    mp[a[i]]++;
+  DS d(k);
+  rep(i,m) d.add(a[i]);
+  cout << d.sum << '\n';
+  rep(i,n-m) {
+    d.add(a[i+m]);
+    d.erase(a[i]);
+    cout << d.sum << '\n';
   }
-  for(auto& [value, number]:mp) {
-    que.push(P(value,number));
-  }
-  for(int i=0; i<=n-m; i++) {
-    ll tmp=0,used=0;
-    bool key1=false,key2=false;
-    vector<P> tmpp;
-    while(1) {
-      ll value=que.top().first; int num=que.top().second;
-      que.pop();
-      num += addmp[value]; addmp[value]=0;
-      tmp+=value*min_func(num,k-used);
-      used+=num;
-      if(i!=0) {
-        if(value==a[i]) num--, key1=true;
-        if(value==a[i+m]) num++, key2=true;
-        tmpp.push_back(P(value,num));
-      }
-      if(used>=k) break;
-      printf("value = %lld\n", value);
-    }
-    for(i=0; i<tmpp.size(); i++) {
-      if(tmpp[i].second==0) continue;
-      else que.push(tmpp[i]);
-    }
-    tmpp.erase();
-    if(key1==false) addmp[a[i]]--;
-    if(key2==false) addmp[a[i+m]]++;
-    res[i]=tmp;
-  }
-  cout << "Yes" << endl;
-  rep(i,n-m+1) cout << res[i] << endl;
-  return 0;
 }
