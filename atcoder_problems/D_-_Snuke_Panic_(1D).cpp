@@ -1,5 +1,3 @@
-// wa だめだ。。。
-
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
@@ -7,38 +5,35 @@ using ll = long long;
 #define rep2(i, s, n) for (int i = (s); i < (int)(n); i++)
 #define REP(i,a,b) for(int i = (a); i < (b); i++)
 #define MOD 1000000007
-#define inf -2e9
-
-vector<vector<ll> > dp(1e5+1,vector<ll>(5,inf));
-ll check(int i, int j, int x, ll a) {
-  if(j<0 || j>=5) return inf;
-  if(dp[i][j]==inf) return inf;
-  if(x==-1||x!=j) return dp[i][j];
-  if(x==j) return max(a,dp[i][j] + a);
-}
+#define inf 2e9
 
 int main(void) {
-  int N;
-  cin >> N;
-  vector<ll> T(N),X(N),A(N);
-  rep(i,N) cin >> T[i] >> X[i] >> A[i];
+  int n;
+  cin >> n;
+  vector<int> t(n), x(n), a(n);
+  rep(i,n) cin >> t[i] >> x[i] >> a[i];
 
-  //vector<vector<ll> > dp(1e5+1,vector<ll>(5,-1));
-  int move[3]={-1,0,1};
-  dp[0][0]=0;
+  vector<vector<ll> > dp(10005, vector<ll>(5,-inf));
   int index=0;
-  for(int i=1; i<=T[N-1]; i++) {
-    int x=-1,a=-1;
-    if(T[index]==i) x=X[index], a=A[index], index++;
-    for(int j=0; j<=4; j++) {
-     for(int k=0; k<3; k++) {
-        dp[i][j] = max(dp[i][j], check(i-1,j-move[k],x,a));
-        }
+  dp[0][0]=0;
+  for(int i=1; i<=t[n-1]; i++) {
+    // isたった時
+    int loc=-1;
+    ll value=0;
+    if(t[index]==i) loc=x[index],value=a[index],index++;
+    for(int j=0; j<5; j++) {
+      ll tmp = (loc==j?value:0);
+      if(dp[i-1][j]==-inf) dp[i][j]=dp[i][j];
+      else dp[i][j] = max(dp[i][j], dp[i-1][j]+tmp);
+      if(j!=0) {
+        if(dp[i-1][j-1]!=-inf) dp[i][j] = max(dp[i][j],dp[i-1][j-1]+tmp);
+      } 
+      if(j!=4) {
+        if(dp[i-1][j+1]!=-inf) dp[i][j] = max(dp[i][j], dp[i-1][j+1]+tmp);
       }
     }
-    ll res=-1;
-  rep(i,5) {
-    res = max(res, dp[T[N-1]][i]);
   }
+  ll res=0;
+  rep(j,5) res = max(res, dp[t[n-1]][j]);
   cout << res << endl;
 }
