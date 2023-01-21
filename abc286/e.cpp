@@ -1,60 +1,41 @@
 #include <bits/stdc++.h>
 using namespace std;
-using ll = long long;
-#define rep(i, n) for (int i = 0; i < (int)(n); i++)
-#define rep2(i, s, n) for (int i = (s); i < (int)(n); i++)
-#define REP(i,a,b) for(int i = (a); i < (b); i++)
-#define MOD 1000000007
 
 int main(void) {
   int n;
-  cin >> n;
-  vector<int> a(n);
-  rep(i,n) cin >> a[i];
-  vector<string> str(n);
-  rep(i,n) cin >> str[i];
+  long long a[300];
+  string s;
+  int d[300][300];
+  long long val[300][300];
 
-  vector<vector<pair<int,ll> > > vec(n, vector<pair<int,ll> >(n));  // vec[i][j] := i->j,本数,宗和
-  rep(i,n) rep(j,n) {
-    vec[i][j] = make_pair(2e8, -1);
-  }
-  vector<vector<int> > graph(n);
-  rep(i,n) {
-    // str[i] search
-    rep(j,n) {
-      if(str[i][j]=='Y') graph[i].push_back(j), vec[i][j]=make_pair(1,a[i]+a[j]);
+  cin >> n;
+  for(int i=0; i<n; i++) cin >> a[i];
+  for(int i=0; i<n; i++) for(int j=0; j<n; j++) d[i][j]=n,val[i][j]=0;
+  for(int i=0; i<n; i++) d[i][i]=0,val[i][i]=0;
+  for(int i=0; i<n; i++) {
+    cin >> s;
+    for(int j=0; j<n; j++) {
+      if(s[j]=='Y') d[i][j]=1,val[i][j]=a[j];
     }
   }
-
-  rep(i,n) {
-    // start node is i
-    vector<int> dist(n,-1);
-    vector<ll> cost(n,-1);
-    queue<int> que;
-    que.push(i);
-    dist[i]=0; cost[i]=a[i];
-    while(!que.empty()) {
-      int v = que.front();
-      que.pop();
-      for(auto nv: graph[v]) {
-        if(dist[nv]!=-1) continue;
-        dist[nv]=dist[v]+1;
-        cost[nv]=cost[v]+a[nv];
-        que.push(nv);
-        if(vec[v][nv].first>dist[nv]) vec[v][nv] = make_pair(dist[nv],cost[nv]);
-        else if(vec[v][nv].first==dist[nv]&&vec[v][nv].second<cost[nv]) 
-        
+  for(int j=0;j<n;j++) {
+    for(int i=0; i<n; i++) {
+      for(int k=0; k<n;k++) {
+        if((d[i][j]+d[j][k])<d[i][k]) {
+          d[i][k]=d[i][j]+d[j][k];
+          val[i][k]=val[i][j]+val[j][k];
+        } else if((d[i][j]+d[j][k])==d[i][k]&&(val[i][j]+val[j][k])>val[i][k]) {
+          val[i][k]=val[i][j]+val[j][k];
+        }
       }
     }
   }
 
-  int q;
+  int q,u,v;
   cin >> q;
-  rep(i,q) {
-    int u,v;
+  for(int i=0;i<q;i++) {
     cin >> u >> v;
-    u--, v--;
-    if(vec[u][v].first==2e8) cout << "Impossible" << endl;
-    else cout << vec[u][v].first <<" " << vec[u][v].second <<  endl;
+    if(d[u-1][v-1]==n) cout<<"Impossible\n";
+    else cout<<d[u-1][v-1]<<" "<<(val[u-1][v-1]+a[u-1])<<"\n";
   }
 }
