@@ -1,4 +1,5 @@
 //wa used a lot of time
+// 方針は合っている。対角線に対して異なる側にあるかの判定
 
 #include <bits/stdc++.h>
 using namespace std;

@@ -5,31 +5,35 @@ using ll = long long;
 #define rep2(i, s, n) for (int i = (s); i < (int)(n); i++)
 #define REP(i,a,b) for(int i = (a); i < (b); i++)
 #define MOD 1000000007
+
+int n,m;
 vector<vector<int> > graph;
 vector<bool> used;
-vector<int> value;
-void dfs(int v) {
-  used[v]=true;
-  value[v]=0;
-  int tmp=0;
-  for(int i=0; i<graph[v].size(); i++) {
-    int nv=graph[v][i];
-    if(used[nv]) continue;
-    dfs(nv);
-    tmp=max(tmp,value[nv]+1);
+vector<int> res;
+void ans() {
+  rep(i,res.size()) {
+    if(i!=res.size()-1) printf("%d ", res[i]+1);
+    else printf("%d\n", res[i]+1);
   }
-  value[v]=tmp;
+}
+void func(int pos) {
+  used[pos]=true;
+  if(pos==n-1) {
+    ans(); return;
+  }
+  for (auto nv : graph[pos]) {
+    if(used[nv]) continue;
+    res.push_back(nv);
+    func(nv);
+  }
+  res.pop_back();
 }
 int main(void) {
-  int n,t;
-  cin >> n >> t;
-  t--;
-
-  // make graph
+  
+  cin >> n >> m;
   graph.resize(n);
   used.resize(n,false);
-  value.resize(n);
-  rep(i,n-1) {
+  rep(i,m) {
     int a,b;
     cin >> a >> b;
     a--; b--;
@@ -37,11 +41,9 @@ int main(void) {
     graph[b].push_back(a);
   }
 
-  // dfs
-  dfs(t);
-  rep(i,n) {
-    if(i==0) cout << value[i];
-    else cout << " " << value[i];
-  }
-  cout << endl;
+  //bfs
+  int pos=0;
+  
+  res.push_back(0);
+  func(pos);
 }

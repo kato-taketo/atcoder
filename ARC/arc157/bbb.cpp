@@ -22,6 +22,7 @@ int main(void) {
 
   // sの調査 
   int tmp=0;
+  bool all_x=false;
   vector<int> vec;  // x..xy...yx...xy...y
   if(s[0]=='Y') vec.push_back(0);
   rep(i,n) {
@@ -31,7 +32,7 @@ int main(void) {
     tmp++;
   }
   vec.push_back(tmp);
-  //rep(i,vec.size()) if(i==vec.size()-1) printf("%d\n", vec[i]); else printf("%d ", vec[i]);
+  if(vec[0]==n) all_x=true;
 
   // change x -> y
   int res=0;
@@ -58,5 +59,6 @@ int main(void) {
     }
   }
   if(k>0) res += k;
+  if(all_x) res = max(0, res-1);
   cout << res << endl;
 }
