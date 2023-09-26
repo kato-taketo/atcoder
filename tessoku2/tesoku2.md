@@ -14,6 +14,7 @@
 # my work
 - 08
   - a51 o
+  - a52 o
   
   - b51 o
   - b52 o
