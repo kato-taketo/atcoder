@@ -1,64 +1,41 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <string> 
+#include <vector>
 using namespace std;
-using ll = long long;
-#define rep(i, n) for (int i = 0; i < (int)(n); i++)
-#define rep2(i, s, n) for (int i = (s); i < (int)(n); i++)
-#define REP(i,a,b) for(int i = (a); i < (b); i++)
-#define MOD 1000000007
 
-int main(void) {
-  int n,q;
-  cin >> n >> q;
-  vector<string> p(n);
-  rep(i,n) cin >> p[i];
-  vector<vector<int> > que(q, vector<int>(4));
-  rep(i,q) rep(j,4) cin >> que[i][j];
+int N ,Q, precalc[1010][1010];
 
-  vector<int> line_num(n,0);
-  vector<int> retu_num(n,0);
-  vector<int> line_cnt(0);
-  ll all_cnt=0;
-  ll sum_tmp=0;
-  rep(i,n) {
-    // i行目
-    int tmp=0;
-    rep(j,n) if(p[i][j]=='B') tmp++;
-    line_num[i]=tmp;
-  }
-  rep(j,n) {
-    int tmp=0;
-    rep(i,n) if(p[i][j]=='B') tmp++;
-    retu_num[j]=tmp;
-  }
-
-  rep(i,q) {
-    int a,b,c,d;
-    int tmp=0;
-    a=que[i][0],b=que[i][1],c=que[i][2],d=que[i][3];
-    tmp=a/n;
-    a-=tmp*n; c-=tmp*n;
-    tmp=b/n;
-    b-=tmp*n; d-=tmp*n;
-
-    int ori_a=a, ori_c=c;
-    while(a%n!=0&&a<=c) {
-      line_cnt[a%n]++;
-      a++;
+long long g(int H, int W) {
+  if(H<=N and W<=N) return precalc[H][W];
+  int Hq=H/N, Hr=H%N;
+  int Wq=W/N, Wr=W%N;
+  long long ret=0;
+  ret += g(N,N)*Hq*Wq;
+  ret += g(Hr,N)*Wq;
+  ret += g(N,Wr)*Hq;
+  ret += g(Hr,Wr);
+  return ret;
+}
+long long f(int A,int B, int C, int D) {
+  return g(C,D)-g(A,D)-g(C,B)+g(A,B);
+}
+int main() {
+  for(int i=0; i<1010; i++) precalc[i][0]=0;
+  for(int j=0; j<1010; j++) precalc[0][j]=0;
+  cin >> N >> Q;
+  vector<string> S(N);
+  for (auto& s: S) cin >> s;
+  for (int i=1; i<=N; i++) {
+    for(int j=1; j<=N; j++) {
+      precalc[i][j] += S[i-1][j-1]=='B';
+      precalc[i][j] += precalc[i-1][j];
+      precalc[i][j] += precalc[i][j-1];
+      precalc[i][j] -= precalc[i-1][j-1];
     }
-    all_cnt=(c-a+1)/n;
-    a+=all_cnt*n;
-    for(int j=a; j<=c; j++) line_cnt[j%n]++;
-
-    int ori_b=b;
-    while(b%n!=0&&b<=d) {
-      // 恥
-      for(int k=ori_a; k<min(ori_c, a-all_cnt*n); k++) {
-        if(p[k%n][])
-      }
-      // 複数
-      sum_tmp += all_cnt*retu_num[b%n];
-      // 恥
-
-    }
+  }
+  while(Q--) {
+    int A,B,C,D;
+    cin >> A >> B >> C >> D;
+    cout << f(A,B,C+1,D+1) << endl;
   }
 }
